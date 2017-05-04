@@ -2,27 +2,6 @@ import urllib.request
 import time
 from time import gmtime, strftime
 import re
-#import tkinter as tk
-#import pygubu
-
-'''class Application:
-    def __init__(self, master):
-
-        #1: Create a builder
-        self.builder = builder = pygubu.Builder()
-
-        #2: Load an ui file
-        builder.add_from_file('gui2.ui')
-
-        #3: Create the widget using a master as parent
-        self.mainwindow = builder.get_object('mainwindow', master)
-
-
-if __name__ == '__main__':
-    root = tk.Tk()
-    app = Application(root)
-    root.mainloop()'''
-#This gui can wait
 
 #url = 'https://owapi.net/api/v3/u/Kataiser-11855/stats?platform=pc'
 urlpre = 'https://owapi.net/api/v3/u/'
@@ -43,7 +22,6 @@ while True:
 
     user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
     headers = {'User-Agent': user_agent}
-    #path = 'us.stats.competitive.overall_stats.comprank'
 
     try:
         request = urllib.request.Request(url, None, headers)
@@ -54,7 +32,6 @@ while True:
         print("Either player doesn't exist, or a connection can't be made.")
         break
 
-    #print('\n')
     rankpos = data.find('comprank')
     #print(rankpos)
     comprank = data[rankpos+11:rankpos+15]
@@ -71,6 +48,3 @@ while True:
 
     print("Waiting for " + str(loopdelay) + " minutes.")
     time.sleep(loopdelay * 60)
-
-#with urllib.request.urlopen(url, None) as f:
-#     print(f.read(300))
