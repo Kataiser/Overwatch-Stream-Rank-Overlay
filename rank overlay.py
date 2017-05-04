@@ -1,6 +1,7 @@
 import urllib.request
 import time
 from time import gmtime, strftime
+import re
 #import tkinter as tk
 #import pygubu
 
@@ -42,7 +43,7 @@ while True:
 
     user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
     headers = {'User-Agent': user_agent}
-    path = 'us.stats.competitive.overall_stats.comprank'
+    #path = 'us.stats.competitive.overall_stats.comprank'
 
     try:
         request = urllib.request.Request(url, None, headers)
@@ -57,17 +58,18 @@ while True:
     rankpos = data.find('comprank')
     #print(rankpos)
     comprank = data[rankpos+11:rankpos+15]
+    comprank = int(re.sub('[^0-9]', '', str(comprank)))
     print(battlenet + "'s rank is " + str(comprank))
 
     with open(battlenet + '.txt', 'w') as out:
-        out.write(comprank)
+        out.write(str(comprank))
 
     with open(platform + '.txt', 'r+') as out:
         if battlenet not in out.read():
             out.write(battlenet + '\n')
             print("Saved player to " + platform + '.txt (first time seen)')
 
-    print("Waiting for {0} minutes.".format(str(loopdelay)))
+    print("Waiting for " + str(loopdelay) + " minutes.")
     time.sleep(loopdelay * 60)
 
 #with urllib.request.urlopen(url, None) as f:
