@@ -3,6 +3,8 @@ import time
 from time import gmtime, strftime
 import re
 
+print("Overwatch Stream Rank Overlay - made by Kataiser")
+
 #url = 'https://owapi.net/api/v3/u/Kataiser-11855/stats?platform=pc'
 urlpre = 'https://owapi.net/api/v3/u/'
 urlpost = '/stats?platform='
