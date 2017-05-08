@@ -1,6 +1,6 @@
 import urllib.request
 import time
-from time import gmtime, strftime
+from time import localtime, strftime
 import re
 
 print("Overwatch Stream Rank Overlay - made by Kataiser")
@@ -11,15 +11,31 @@ urlpost = '/stats?platform='
 battlenet = input('Battle.net ID (formatted as "Example-1234" if PC and "Example" if not): ')
 if battlenet == '':
     battlenet = 'Kataiser-11855'
-platform = input("Platform (pc, xbl, or psn): ").lower()
+platform = ''
+platforms = ['pc', 'xbl', 'psn']
+while platform not in platforms:
+    platform = input("Platform (pc, xbl, or psn): ").lower()
+    if platform not in platforms:
+        print("One of the three, please.")
+if platform == 'pc':
+    i = battlenet.find('-')
+    bnetshort = battlenet[0:i]
+else:
+    bnetshort = battlenet
 url = urlpre + battlenet + urlpost + platform
-loopdelay = float(input("How long to wait between updates, in minutes: "))
+loopdelay = None
+while not loopdelay:
+    i = input("How long to wait between updates, in minutes: ")
+    try:
+        loopdelay = float(i)
+    except ValueError:
+        print("Needs to be a number.")
 
 looptimes = 0
 while True:
     looptimes += 1
     print("--------------------------")
-    print("Run " + str(looptimes) + ", at " + str(strftime('%H:%M:%S', gmtime())))
+    print("Run " + str(looptimes) + ", at " + str(strftime('%I:%M:%S', localtime())))
     print("Getting stats.")
 
     user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
@@ -38,7 +54,7 @@ while True:
     #print(rankpos)
     comprank = data[rankpos+11:rankpos+15]
     comprank = int(re.sub('[^0-9]', '', str(comprank)))
-    print(battlenet + "'s rank is " + str(comprank))
+    print(bnetshort + "'s rank is " + str(comprank))
 
     with open(battlenet + '.txt', 'w') as out:
         out.write(str(comprank))
