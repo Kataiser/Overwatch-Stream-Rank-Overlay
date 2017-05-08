@@ -36,15 +36,19 @@ while True:
     looptimes += 1
     print("--------------------------")
     print("Run " + str(looptimes) + ", at " + str(strftime('%I:%M:%S', localtime())))
-    print("Getting stats.")
+    print("Getting stats...")
 
     user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
     headers = {'User-Agent': user_agent}
 
     try:
         request = urllib.request.Request(url, None, headers)
+        t1 = time.time()
         response = urllib.request.urlopen(request)
+        t2 = time.time()
+        searchtime = str(t2 - t1)[0:3]
         data = response.read().decode('utf-8')
+        print("Stats found in " + searchtime + " seconds.")
         #print(data)
     except:
         print("Either player doesn't exist, or a connection can't be made.")
@@ -54,15 +58,22 @@ while True:
     #print(rankpos)
     comprank = data[rankpos+11:rankpos+15]
     comprank = int(re.sub('[^0-9]', '', str(comprank)))
-    print(bnetshort + "'s rank is " + str(comprank))
+    print(bnetshort + "'s rank is " + str(comprank) + ".")
 
-    with open(battlenet + '.txt', 'w') as out:
-        out.write(str(comprank))
+    try:
+        with open(battlenet + '.txt', 'w') as out:
+            out.write(str(comprank))
+        print("Saved to user's file, point streaming program at it.")
+    except:
+        print("Couldn't save to user's file!")
 
-    with open(platform + '.txt', 'r+') as out:
-        if battlenet not in out.read():
-            out.write(battlenet + '\n')
-            print("Saved player to " + platform + '.txt (first time seen)')
+    try:
+        with open(platform + '.txt', 'r+') as out:
+            if battlenet not in out.read():
+                out.write(battlenet + '\n')
+                print("Saved player to " + platform + '.txt (first time seen)')
+    except:
+        print("Couldn't save to platform file!")
 
-    print("Waiting for " + str(loopdelay) + " minutes.")
+    print("Waiting for " + str(loopdelay) + " minutes...")
     time.sleep(loopdelay * 60)
