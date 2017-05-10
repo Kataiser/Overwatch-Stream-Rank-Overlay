@@ -23,11 +23,13 @@ if platform == 'pc':
 else:
     bnetshort = battlenet
 url = urlpre + battlenet + urlpost + platform
-loopdelay = None
-while not loopdelay:
+loopdelay = 0
+while loopdelay < 0.5:
     i = input("How long to wait between updates, in minutes: ")
     try:
         loopdelay = float(i)
+        if loopdelay < 0.5:
+            print("Needs to be 0.5 or larger, to avoid overstressing the API.")
     except ValueError:
         print("Needs to be a number.")
 
