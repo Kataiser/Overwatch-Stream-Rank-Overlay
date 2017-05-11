@@ -2,15 +2,18 @@ import urllib.request
 import time
 from time import localtime, strftime
 import re
+import winsound
 
 print("Overwatch Stream Rank Overlay - made by Kataiser")
+dev = False
 
 #url = 'https://owapi.net/api/v3/u/Kataiser-11855/stats?platform=pc'
 urlpre = 'https://owapi.net/api/v3/u/'
 urlpost = '/stats?platform='
 battlenet = input('Battle.net ID (formatted as "Example-1234" if PC and "Example" if not): ')
-if battlenet == '':
+if battlenet == '' and dev:
     battlenet = 'Kataiser-11855'
+
 platform = ''
 platforms = ['pc', 'xbl', 'psn']
 while platform not in platforms:
@@ -23,6 +26,23 @@ if platform == 'pc':
 else:
     bnetshort = battlenet
 url = urlpre + battlenet + urlpost + platform
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+loopdelay = 0
+if dev:
+    loopdelaymin = 0.1
+else:
+    loopdelaymin = 0.5
+while loopdelay < loopdelaymin:
+    i = input("How long to wait between updates, in minutes: ")
+    try:
+        loopdelay = float(i)
+        if loopdelay < loopdelaymin:
+            print("Needs to be " + str(loopdelaymin) + " or larger, to avoid overstressing the API.")
+=======
+=======
+>>>>>>> origin/master
 loopdelay = 0
 while loopdelay < 0.5:
     i = input("How long to wait between updates, in minutes: ")
@@ -30,6 +50,10 @@ while loopdelay < 0.5:
         loopdelay = float(i)
         if loopdelay < 0.5:
             print("Needs to be 0.5 or larger, to avoid overstressing the API.")
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
+>>>>>>> origin/master
     except ValueError:
         print("Needs to be a number.")
 
@@ -63,7 +87,14 @@ while True:
     print(bnetshort + "'s rank is " + str(comprank) + ".")
 
     try:
-        with open(battlenet + '.txt', 'w') as out:
+        fname = battlenet + '.txt'
+        with open(fname, 'r') as out:
+            if str(comprank) not in out.read():
+                try:
+                    winsound.PlaySound('rankchange.wav', winsound.SND_FILENAME)
+                except:
+                    print("Sound effect can't be played.")
+        with open(fname, "w") as out:
             out.write(str(comprank))
         print("Saved to user's file, point streaming program at it.")
     except:
