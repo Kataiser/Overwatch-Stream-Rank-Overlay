@@ -41,11 +41,22 @@ while loopdelay < loopdelaymin:
     except ValueError:
         print("Needs to be a number.")
 
+maxtime = 360
+try:
+    with open('maxhours.txt', 'r') as out:
+        maxtime = float(out.read())
+    print("Max running time is " + str(maxtime) + " hours (edit with maxhours.txt).")
+except:
+    print("Couldn't open maxhours.txt, defaulting to 6 hour max running time.")
+
+print("Starting main loop.\n")
+
 looptimes = 0
-while True:
+loops_t1 = time.time()
+while (time.time() - loops_t1) < (maxtime * 3600):
     looptimes += 1
     print("--------------------------")
-    print("Run " + str(looptimes) + ", at " + str(strftime('%I:%M:%S', localtime())))
+    print("Run " + str(int(looptimes)) + ", at " + str(strftime('%I:%M:%S', localtime())) + " (" + str((time.time() - loops_t1) / 60)[0:3] + " minutes since start)")
     print("Getting stats...")
 
     user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
@@ -53,10 +64,10 @@ while True:
 
     try:
         request = urllib.request.Request(url, None, headers)
-        t1 = time.time()
+        api_t1 = time.time()
         response = urllib.request.urlopen(request)
-        t2 = time.time()
-        searchtime = str(t2 - t1)[0:3]
+        api_t2 = time.time()
+        searchtime = str(api_t2 - api_t1)[0:3]
         data = response.read().decode('utf-8')
         print("Stats found in " + searchtime + " seconds.")
         #print(data)
@@ -94,3 +105,5 @@ while True:
 
     print("Waiting for " + str(loopdelay) + " minutes...")
     time.sleep(loopdelay * 60)
+
+print("\nReached max loop time (" + str(maxtime) + " hours), exiting. If that's too short, edit maxhours.txt.")
