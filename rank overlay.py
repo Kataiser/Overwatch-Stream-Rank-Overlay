@@ -41,7 +41,7 @@ while loopdelay < loopdelaymin:
     except ValueError:
         print("Needs to be a number.")
 
-maxtime = 360
+maxtime = 6
 try:
     with open('maxhours.txt', 'r') as out:
         maxtime = float(out.read())
