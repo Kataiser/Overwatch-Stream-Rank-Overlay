@@ -3,6 +3,8 @@ import time
 from time import localtime, strftime
 import re
 import winsound
+import configparser
+import ast
 
 print("Overwatch Stream Rank Overlay - made by Kataiser")
 dev = False
@@ -10,9 +12,15 @@ dev = False
 #url = 'https://owapi.net/api/v3/u/Kataiser-11855/stats?platform=pc'
 urlpre = 'https://owapi.net/api/v3/u/'
 urlpost = '/stats?platform='
-battlenet = input('Battle.net ID (formatted as "Example-1234" if PC and "Example" if not): ')
-if battlenet == '' and dev:
-    battlenet = 'Kataiser-11855'
+
+battlenet = ''
+while battlenet == '':
+    battlenet = input('Battle.net ID (formatted as "Example-1234" if PC and "Example" if not): ')
+    if battlenet == '':
+        if dev:
+            battlenet = 'Kataiser-11855'
+        else:
+            print('Please actually enter an ID.')
 
 platform = ''
 platforms = ['pc', 'xbl', 'psn']
@@ -41,13 +49,13 @@ while loopdelay < loopdelaymin:
     except ValueError:
         print("Needs to be a number.")
 
-maxtime = 6
-try:
-    with open('maxhours.txt', 'r') as out:
-        maxtime = float(out.read())
-    print("Max running time is " + str(maxtime) + " hours (edit with maxhours.txt).")
-except:
-    print("Couldn't open maxhours.txt, defaulting to 6 hour max running time.")
+config = configparser.ConfigParser()
+with open('settings.ini', 'r') as configfile:
+    config.read('settings.ini')
+    maxtime = float(config['MAIN']['maxhours'])
+    playsound = ast.literal_eval(config['MAIN']['playsound'])
+    prefix = str(config['MAIN']['prefix'])
+print("Max running time is " + str(maxtime) + " hours (edit with settings.ini).")
 
 print("Starting main loop.\n")
 
@@ -78,22 +86,28 @@ while (time.time() - loops_t1) < (maxtime * 3600):
     rankpos = data.find('comprank')
     #print(rankpos)
     comprank = data[rankpos+11:rankpos+15]
-    comprank = int(re.sub('[^0-9]', '', str(comprank)))
-    print(bnetshort + "'s rank is " + str(comprank) + ".")
+    if str(comprank) != 'null':
+        comprank = int(re.sub('[^0-9]', '', str(comprank)))
+        print(bnetshort + "'s rank is " + str(comprank) + ".")
+    else:
+        print("This player doesn't seem to have a rank for this season.")
+        comprank = 0
 
+    fname = battlenet + '.txt'
     try:
-        fname = battlenet + '.txt'
-        with open(fname, 'r') as out:
-            if str(comprank) not in out.read():
-                try:
-                    winsound.PlaySound('rankchange.wav', winsound.SND_FILENAME)
-                except:
-                    print("Sound effect can't be played.")
-        with open(fname, "w") as out:
-            out.write(str(comprank))
-        print("Saved to user's file, point streaming program at it.")
-    except:
-        print("Couldn't save to user's file!")
+        file = open(fname, 'r')
+    except FileNotFoundError:
+        file = open(fname, 'w')
+    with open(fname, 'r') as out:
+        if str(comprank) not in out.read() and playsound:
+            try:
+                winsound.PlaySound('rankchange.wav', winsound.SND_FILENAME)
+            except:
+                print("Sound effect can't be played.")
+    with open(fname, "w") as out:
+        out.write(prefix + ' ' + str(comprank))
+    print("Saved to user's file, point streaming program at it.")
+    #print("Couldn't save to user's file!")
 
     try:
         with open(platform + '.txt', 'r+') as out:
